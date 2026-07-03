@@ -1,0 +1,141 @@
+/* Notifications Page Styles */
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notifications-card {
+  overflow: hidden; /* ensures the top corners of tabs are rounded nicely if they touch the top */
+}
+
+/* Tabs */
+.notifications-tabs {
+  border-bottom: 1px solid var(--color-bg);
+}
+
+.tab-btn {
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  font-weight: 600;
+  color: var(--color-text-light);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-fast);
+  font-size: 0.95rem;
+}
+
+.tab-btn:hover {
+  color: var(--color-text-dark);
+}
+
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+/* Notification List & Items */
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-item {
+  border-bottom: 1px solid var(--color-bg);
+  position: relative;
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background-color: var(--color-bg-light);
+}
+
+.notification-item.unread {
+  background-color: rgba(107, 142, 177, 0.04); /* very subtle primary tint */
+}
+
+.notification-item.unread:hover {
+  background-color: rgba(107, 142, 177, 0.08);
+}
+
+/* Icons container */
+.notification-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Specific icon background tints based on type */
+.notification-icon.alert { background-color: rgba(231, 76, 60, 0.1); }
+.notification-icon.success { background-color: rgba(46, 204, 113, 0.1); }
+.notification-icon.info { background-color: rgba(107, 142, 177, 0.1); }
+.notification-icon.warning { background-color: rgba(241, 196, 15, 0.1); }
+.notification-icon.system { background-color: rgba(126, 134, 145, 0.1); }
+
+/* Title & Actions */
+.notification-title {
+  font-size: 1rem;
+  color: var(--color-text-dark);
+}
+
+.notification-item:hover .notification-actions {
+  opacity: 1;
+}
+
+.action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
+}
+
+.action-btn:hover {
+  background-color: var(--color-bg);
+}
+
+/* Unread Dot */
+.unread-indicator {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  position: absolute;
+  top: 50%;
+  right: 1.5rem;
+  transform: translateY(-50%);
+  box-shadow: 0 0 0 2px var(--color-white); /* creates a tiny cutout effect */
+}
+
+/* Empty State */
+.empty-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  background-color: var(--color-bg);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
