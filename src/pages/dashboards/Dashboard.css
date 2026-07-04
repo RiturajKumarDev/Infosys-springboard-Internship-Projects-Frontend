@@ -56,15 +56,21 @@
 .stat-card-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
   width: 100%;
 }
 
+.stat-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
 .stat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,8 +81,10 @@
 .stat-trend {
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.2rem 0.6rem;
-  border-radius: var(--radius-full);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
 }
 
 .stat-trend.positive { background: rgba(16, 185, 129, 0.1); color: #059669; }
@@ -84,34 +92,35 @@
 .stat-trend.danger { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
 
 .stat-card:hover .stat-icon {
-  transform: scale(1.15) rotate(5deg);
+  transform: scale(1.1) rotate(5deg);
 }
 
 .stat-content h3 {
-  font-size: 1.85rem;
+  font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.75rem;
   line-height: 1;
   color: var(--color-text-dark);
 }
 
-.stat-content p {
-  color: var(--color-text-dark);
-  font-size: 0.95rem;
-  font-weight: 600;
+.stat-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .stat-subtext {
   color: var(--color-text-light);
-  font-size: 0.75rem;
-  display: block;
-  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 .dashboard-middle-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 1.5rem;
+  align-items: start;
 }
 
 .dashboard-middle-grid > div,
@@ -163,21 +172,19 @@
 }
 
 .chart-wrapper {
-  height: 280px;
+  height: 220px;
   width: 100%;
   position: relative;
 }
 
-.main-chart .chart-wrapper {
-  flex: 1;
-  height: auto;
-  min-height: 350px;
+.main-chart-card .chart-wrapper {
+  height: 280px;
 }
 
 .doughnut-wrapper {
   display: flex;
   justify-content: center;
-  height: 240px;
+  height: 200px;
 }
 
 /* Quick Actions */

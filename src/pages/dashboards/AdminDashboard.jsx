@@ -181,17 +181,17 @@ const AdminDashboard = () => {
         {stats.map((stat, idx) => (
           <div key={idx} className="stat-card">
             <div className="stat-card-header">
+              <p className="stat-label">{stat.label}</p>
               <div className="stat-icon" style={{ color: stat.color, backgroundColor: `${stat.color}15` }}>
                 {stat.icon}
-              </div>
-              <div className={`stat-trend ${stat.trendType}`}>
-                {stat.trend}
               </div>
             </div>
             <div className="stat-content">
               <h3>{stat.value}</h3>
-              <p>{stat.label}</p>
-              <span className="stat-subtext">{stat.subtext}</span>
+              <div className="stat-footer">
+                <span className={`stat-trend ${stat.trendType}`}>{stat.trend}</span>
+                <span className="stat-subtext">{stat.subtext}</span>
+              </div>
             </div>
           </div>
         ))}
