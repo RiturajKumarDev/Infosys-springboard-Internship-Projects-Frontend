@@ -7,8 +7,11 @@ import {
   FileText, 
   Check, 
   Trash2, 
-  Clock 
+  Clock,
+  Settings,
+  MoreVertical
 } from 'lucide-react';
+import Button from '../../components/Buttons/Button';
 import './Notifications.css';
 
 const initialNotifications = [
@@ -16,52 +19,52 @@ const initialNotifications = [
     id: 1,
     type: 'alert',
     title: 'Contract Expiring Soon',
-    message: 'The vendor agreement with TechCorp is expiring in 15 days.',
+    message: 'The vendor agreement with TechCorp is expiring in 15 days. Action is required to avoid service interruption.',
     time: '2 hours ago',
     read: false,
-    icon: <AlertCircle size={20} className="text-danger" />
+    icon: <AlertCircle size={22} className="notif-icon-danger" />
   },
   {
     id: 2,
     type: 'success',
     title: 'Obligation Met',
-    message: 'Q3 Payment to Global Logistics has been successfully processed.',
+    message: 'Q3 Payment to Global Logistics has been successfully processed and recorded.',
     time: '5 hours ago',
     read: false,
-    icon: <CheckCircle size={20} className="text-success" />
+    icon: <CheckCircle size={22} className="notif-icon-success" />
   },
   {
     id: 3,
     type: 'info',
     title: 'New Contract Added',
-    message: 'A new NDA contract for Project X has been uploaded by Sarah.',
+    message: 'A new NDA contract for Project X has been uploaded by Sarah and is awaiting your review.',
     time: 'Yesterday',
     read: true,
-    icon: <FileText size={20} className="text-primary" />
+    icon: <FileText size={22} className="notif-icon-primary" />
   },
   {
     id: 4,
     type: 'warning',
     title: 'Pending Approval',
-    message: 'Marketing Services Agreement requires your signature.',
+    message: 'Marketing Services Agreement requires your signature before end of week.',
     time: '2 days ago',
     read: true,
-    icon: <Info size={20} className="text-warning" />
+    icon: <Info size={22} className="notif-icon-warning" />
   },
   {
     id: 5,
     type: 'system',
     title: 'System Update',
-    message: 'Scheduled maintenance on Saturday 2AM - 4AM EST.',
+    message: 'Scheduled maintenance on Saturday 2AM - 4AM EST. The portal will be briefly unavailable.',
     time: '1 week ago',
     read: true,
-    icon: <Bell size={20} className="text-muted" />
+    icon: <Bell size={22} className="notif-icon-muted" />
   }
 ];
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState(initialNotifications);
-  const [activeTab, setActiveTab] = useState('all'); // 'all' or 'unread'
+  const [activeTab, setActiveTab] = useState('all');
 
   const markAllAsRead = () => {
     setNotifications(notifications.map(n => ({ ...n, read: true })));
@@ -84,75 +87,79 @@ const Notifications = () => {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="notifications-page p-6 fade-in">
-      <div className="notifications-header flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            Notifications 
-            {unreadCount > 0 && <span className="badge badge-primary">{unreadCount} New</span>}
-          </h1>
-          <p className="text-muted mt-1">Stay updated on your contracts and obligations.</p>
+    <div className="notif-dashboard fade-in">
+      <div className="notif-header-section">
+        <div className="notif-header-content">
+          <div className="notif-title-row">
+            <h1 className="notif-title">Notifications</h1>
+            {unreadCount > 0 && <span className="notif-badge-pill">{unreadCount} New</span>}
+          </div>
+          <p className="notif-subtitle">Stay updated on your contracts, obligations, and system alerts.</p>
         </div>
-        <div className="flex gap-4">
+        <div className="notif-header-actions">
           {unreadCount > 0 && (
-            <button className="btn btn-outline" onClick={markAllAsRead}>
-              <Check size={16} /> Mark all as read
-            </button>
+            <Button variant="outline" onClick={markAllAsRead} icon={Check}>
+              Mark all as read
+            </Button>
           )}
+          <Button variant="outline" icon={Settings}>
+            Preferences
+          </Button>
         </div>
       </div>
 
-      <div className="card notifications-card p-0">
-        <div className="notifications-tabs flex border-b">
+      <div className="notif-main-area animate-slide-up" style={{ animationDelay: '0.1s' }}>
+        <div className="notif-tabs">
           <button 
-            className={`tab-btn ${activeTab === 'all' ? 'active' : ''}`}
+            className={`notif-tab-btn ${activeTab === 'all' ? 'active' : ''}`}
             onClick={() => setActiveTab('all')}
           >
             All Notifications
           </button>
           <button 
-            className={`tab-btn ${activeTab === 'unread' ? 'active' : ''}`}
+            className={`notif-tab-btn ${activeTab === 'unread' ? 'active' : ''}`}
             onClick={() => setActiveTab('unread')}
           >
             Unread
           </button>
         </div>
 
-        <div className="notifications-list">
+        <div className="notif-list-container">
           {filteredNotifications.length === 0 ? (
-            <div className="empty-state p-8 flex flex-col items-center justify-center text-center">
-              <div className="empty-icon-wrapper mb-4">
-                <Bell size={48} className="text-muted" />
+            <div className="notif-empty-state">
+              <div className="empty-bell-wrapper">
+                <Bell size={48} className="empty-bell-icon" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">No notifications found</h3>
-              <p className="text-muted">You're all caught up! There are no new alerts to review.</p>
+              <h3>You're all caught up!</h3>
+              <p>There are no {activeTab === 'unread' ? 'unread' : 'new'} alerts to review right now.</p>
             </div>
           ) : (
-            filteredNotifications.map((notif) => (
+            filteredNotifications.map((notif, index) => (
               <div 
                 key={notif.id} 
-                className={`notification-item flex items-start gap-4 p-4 ${!notif.read ? 'unread' : ''}`}
+                className={`notif-item-card ${!notif.read ? 'is-unread' : ''}`}
+                style={{ animationDelay: `${index * 0.05}s` }}
                 onClick={() => markAsRead(notif.id)}
               >
-                <div className={`notification-icon ${notif.type}`}>
+                {!notif.read && <div className="unread-dot"></div>}
+                
+                <div className={`notif-avatar bg-tint-${notif.type}`}>
                   {notif.icon}
                 </div>
                 
-                <div className="notification-content flex-1">
-                  <div className="flex justify-between items-start">
-                    <h4 className="notification-title font-semibold mb-1">{notif.title}</h4>
-                    <span className="notification-time text-xs text-muted flex items-center gap-1">
+                <div className="notif-content-block">
+                  <div className="notif-top-row">
+                    <h4 className="notif-item-title">{notif.title}</h4>
+                    <span className="notif-timestamp">
                       <Clock size={12} /> {notif.time}
                     </span>
                   </div>
-                  <p className="notification-message text-sm text-muted mb-2">
-                    {notif.message}
-                  </p>
+                  <p className="notif-item-message">{notif.message}</p>
                   
-                  <div className="notification-actions flex gap-2 opacity-0 transition-fast">
+                  <div className="notif-hover-actions">
                     {!notif.read && (
                       <button 
-                        className="action-btn text-primary text-xs flex items-center gap-1"
+                        className="quick-action-btn action-read"
                         onClick={(e) => {
                           e.stopPropagation();
                           markAsRead(notif.id);
@@ -162,7 +169,7 @@ const Notifications = () => {
                       </button>
                     )}
                     <button 
-                      className="action-btn text-danger text-xs flex items-center gap-1"
+                      className="quick-action-btn action-delete"
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteNotification(notif.id);
@@ -172,10 +179,10 @@ const Notifications = () => {
                     </button>
                   </div>
                 </div>
-
-                {!notif.read && (
-                  <div className="unread-indicator"></div>
-                )}
+                
+                <button className="notif-menu-btn">
+                  <MoreVertical size={18} />
+                </button>
               </div>
             ))
           )}

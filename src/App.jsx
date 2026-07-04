@@ -10,6 +10,10 @@ import ContractDetails from './pages/contracts/ContractDetails';
 import ArchivedContracts from './pages/contracts/ArchivedContracts';
 import Notifications from './pages/notifications/Notifications';
 import Reports from './pages/reports/Reports';
+import Obligations from './pages/obligations/Obligations';
+import Compliance from './pages/compliance/Compliance';
+import Renewals from './pages/renewals/Renewals';
+import Settings from './pages/settings/Settings';
 
 function App() {
   return (
@@ -24,7 +28,7 @@ function App() {
         <Route path="/" element={<PageContainer />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
-          
+            
           {/* Contracts Module */}
           <Route path="contracts" element={<ContractRepository />} />
           <Route path="contracts/:id" element={<ContractDetails />} />
@@ -33,9 +37,11 @@ function App() {
           <Route path="reports" element={<Reports />} />
           
           {/* Placeholders for other modules to be implemented in future phases */}
-          <Route path="obligations" element={<div className="p-6"><h2>Obligation Tracking</h2></div>} />
-          <Route path="renewals" element={<div className="p-6"><h2>Renewal Management</h2></div>} />
-          <Route path="compliance" element={<div className="p-6"><h2>Compliance Monitoring</h2></div>} />
+          <Route path="obligations" element={<Obligations />} />
+          <Route path="renewals" element={<Renewals />} />
+          <Route path="compliance" element={<Compliance />} />
+          
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
     </BrowserRouter>

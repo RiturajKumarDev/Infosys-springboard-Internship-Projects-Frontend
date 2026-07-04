@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, Eye, RotateCcw } from 'lucide-react';
-import FormInput from '../../components/Form/FormInput';
-import FormSelect from '../../components/Form/FormSelect';
+import { Search, Eye, RotateCcw, FolderOpen, MoreVertical } from 'lucide-react';
 import Dropdown from '../../components/Buttons/Dropdown';
 import Button from '../../components/Buttons/Button';
 import Modal from '../../components/Modals/Modal';
-import Badge from '../../components/DataDisplay/Badge';
-import Table from '../../components/DataDisplay/Table';
 import './Contracts.css';
 
 const ArchivedContracts = () => {
@@ -18,13 +14,13 @@ const ArchivedContracts = () => {
   const [contractToRestore, setContractToRestore] = useState(null);
 
   const [contracts, setContracts] = useState([
-    { id: 'CON-2021-004', name: 'Service Agreement - Alpha Co', category: 'Service Agreement', status: 'Archived', value: '$80,000', expiry: '2022-05-31' },
-    { id: 'CON-2020-092', name: 'Vendor Contract - Beta Ltd', category: 'Vendor Contract', status: 'Archived', value: '$45,000', expiry: '2021-12-15' },
-    { id: 'CON-2019-115', name: 'Lease Agreement - Old HQ', category: 'Lease Agreement', status: 'Archived', value: '$120,000/yr', expiry: '2020-10-31' },
+    { id: 'CON-2021-004', name: 'Service Agreement', entity: 'Alpha Co', category: 'Service Agreement', status: 'Archived', value: '$80,000', expiry: '2022-05-31' },
+    { id: 'CON-2020-092', name: 'Vendor Contract', entity: 'Beta Ltd', category: 'Vendor Contract', status: 'Archived', value: '$45,000', expiry: '2021-12-15' },
+    { id: 'CON-2019-115', name: 'Lease Agreement', entity: 'Old HQ', category: 'Lease Agreement', status: 'Archived', value: '$120,000/yr', expiry: '2020-10-31' },
   ]);
 
   const getStatusBadge = (status) => {
-    return <Badge variant={status === 'Archived' ? 'default' : 'primary'}>{status}</Badge>;
+    return <span className="status-pill status-muted"><FolderOpen size={14} /> {status}</span>;
   };
 
   const handleRowClick = (id) => {
@@ -44,92 +40,100 @@ const ArchivedContracts = () => {
   };
 
   const filteredContracts = contracts.filter(c => {
-    const matchesSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) || c.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory ? c.category.includes(filterCategory) : true;
+    const matchesSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          c.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (c.entity && c.entity.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesCategory = filterCategory ? c.category === filterCategory : true;
     return matchesSearch && matchesCategory;
   });
 
   return (
-    <div className="contracts-container">
-      <div className="contracts-header">
-        <div>
-          <h1>Archived Contracts</h1>
-          <p className="text-muted">View and manage contracts that have been archived.</p>
+    <div className="cr-dashboard fade-in">
+      <div className="cr-header-section">
+        <div className="cr-header-content">
+          <h1 className="cr-title">Archived Contracts</h1>
+          <p className="cr-subtitle">View and manage contracts that have been archived.</p>
         </div>
       </div>
 
-      <div className="main-card animate-slide-up">
-        <div className="controls-bar" style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '0' }}>
-          <div className="input-with-icon" style={{ flex: 1 }}>
-            <Search size={18} className="input-icon" />
-            <FormInput 
+      <div className="cr-main-area animate-slide-up">
+        <div className="cr-toolbar">
+          <div className="cr-search">
+            <Search size={18} className="search-icon" />
+            <input 
               type="text" 
               placeholder="Search by ID, name, or counterparty..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ width: '100%', paddingLeft: '2.5rem', margin: 0, backgroundColor: 'var(--color-bg-light)', border: 'none' }}
             />
           </div>
           
-          <div className="filters" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <FormSelect 
+          <div className="cr-filters">
+            <select 
+              className="cr-select"
               value={filterCategory} 
               onChange={(e) => setFilterCategory(e.target.value)}
-              options={[
-                { value: 'Vendor', label: 'All Categories' },
-                { value: 'Employment', label: 'Employment' },
-                { value: 'Lease', label: 'Lease Agreements' },
-                { value: 'Service', label: 'Service Agreement' }
-              ]}
-              style={{ width: '200px', margin: 0, backgroundColor: 'var(--color-bg-light)', border: 'none' }}
-            />
+            >
+              <option value="">All Categories</option>
+              <option value="Vendor Contract">Vendor Contract</option>
+              <option value="Employment Contract">Employment</option>
+              <option value="Lease Agreement">Lease Agreement</option>
+              <option value="Service Agreement">Service Agreement</option>
+            </select>
           </div>
         </div>
 
-        <Table>
+        <div className="cr-table-wrapper">
+          <table className="cr-data-table">
             <thead>
               <tr>
-                <th>Contract ID</th>
-                <th>Name</th>
-                <th>Category</th>
+                <th>Contract Details</th>
+                <th>Category & Value</th>
+                <th>Timeline</th>
                 <th>Status</th>
-                <th>Value</th>
-                <th>Expiry Date</th>
-                <th style={{ textAlign: 'center' }}>Actions</th>
+                <th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredContracts.map((contract) => (
-                <tr key={contract.id} style={{ cursor: 'pointer' }} onClick={() => handleRowClick(contract.id)}>
-                  <td className="font-semibold" style={{ color: 'var(--color-text-dark)' }}>{contract.id}</td>
-                  <td className="font-semibold">{contract.name}</td>
-                  <td style={{ color: 'var(--color-text-light)' }}>{contract.category}</td>
+              {filteredContracts.map((contract, index) => (
+                <tr key={contract.id} className="cr-table-row" style={{ animationDelay: `${index * 0.05}s` }} onClick={() => handleRowClick(contract.id)}>
+                  <td>
+                    <div className="cr-entity">{contract.name}</div>
+                    <div className="cr-meta">{contract.entity} • ID: {contract.id}</div>
+                  </td>
+                  <td>
+                    <div className="cr-value-text">{contract.category}</div>
+                    <div className="cr-meta mt-1">{contract.value}</div>
+                  </td>
+                  <td>
+                    <div className="cr-value-text">Exp: {contract.expiry}</div>
+                  </td>
                   <td>{getStatusBadge(contract.status)}</td>
-                  <td>{contract.value}</td>
-                  <td>{contract.expiry}</td>
-                  <td onClick={(e) => e.stopPropagation()}>
-                    <div className="flex gap-2 items-center justify-center">
-                      <Button variant="icon" title="View Details" onClick={() => handleRowClick(contract.id)} icon={Eye} />
-                      <Button variant="icon" title="Restore Contract" onClick={(e) => handleRestoreClick(e, contract.id)} icon={RotateCcw} />
-                      <Dropdown 
-                        label="" 
-                        items={[
-                          { label: 'Export PDF' },
-                          { label: 'View History' }
-                        ]}
-                        onSelect={(item) => console.log(item.label, contract.id)}
-                      />
+                  <td className="cr-action-cell">
+                    <div className="cr-action-group" onClick={(e) => e.stopPropagation()}>
+                      <button className="cr-icon-btn" title="View Details" onClick={() => handleRowClick(contract.id)}>
+                        <Eye size={16} />
+                      </button>
+                      <button className="cr-icon-btn" title="Restore Contract" onClick={(e) => handleRestoreClick(e, contract.id)}>
+                        <RotateCcw size={16} />
+                      </button>
+                      <button className="cr-icon-btn">
+                        <MoreVertical size={16} />
+                      </button>
                     </div>
                   </td>
                 </tr>
               ))}
-              {filteredContracts.length === 0 && (
-                <tr>
-                  <td colSpan="7" className="text-center text-muted" style={{ padding: '2rem' }}>No archived contracts found.</td>
-                </tr>
-              )}
             </tbody>
-        </Table>
+          </table>
+
+          {filteredContracts.length === 0 && (
+            <div className="cr-empty-state">
+              <FolderOpen size={48} className="text-muted" style={{ opacity: 0.5, margin: '0 auto 1rem' }} />
+              <p>No archived contracts found.</p>
+            </div>
+          )}
+        </div>
       </div>
 
       <Modal 

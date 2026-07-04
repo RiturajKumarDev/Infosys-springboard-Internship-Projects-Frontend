@@ -12,7 +12,7 @@ import {
   BarChart3
 } from 'lucide-react';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, closeSidebar }) => {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
     { path: '/contracts', label: 'Contracts', icon: <Files size={20} /> },
@@ -24,7 +24,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
         <ShieldCheck className="sidebar-logo-icon" size={28} />
         <div className="sidebar-title">Contract<span>IQ</span></div>
@@ -36,6 +36,7 @@ const Sidebar = () => {
             key={item.path} 
             to={item.path} 
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            onClick={closeSidebar}
           >
             {item.icon}
             <span>{item.label}</span>
@@ -44,12 +45,12 @@ const Sidebar = () => {
       </nav>
 
       <div className="sidebar-footer">
-        <nav className="sidebar-nav" style={{ padding: 0 }}>
-          <NavLink to="/settings" className="nav-item">
+        <nav className="sidebar-footer-nav">
+          <NavLink to="/settings" className="nav-item" onClick={closeSidebar}>
             <Settings size={20} />
             <span>Settings</span>
           </NavLink>
-          <NavLink to="/login" className="nav-item" style={{ color: 'var(--color-danger)' }}>
+          <NavLink to="/login" className="nav-item nav-item-danger" onClick={closeSidebar}>
             <LogOut size={20} />
             <span>Logout</span>
           </NavLink>

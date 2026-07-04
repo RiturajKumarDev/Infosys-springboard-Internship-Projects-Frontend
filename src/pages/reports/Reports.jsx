@@ -6,7 +6,10 @@ import {
   Calendar, 
   PieChart as PieChartIcon, 
   TrendingUp,
-  FileText
+  FileText,
+  Activity,
+  ArrowUpRight,
+  ArrowDownRight
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -22,9 +25,9 @@ import {
   Filler
 } from 'chart.js';
 import { Line, Doughnut, Bar } from 'react-chartjs-2';
-import './Reports.css'; // Import the new premium design CSS
+import Button from '../../components/Buttons/Button';
+import './Reports.css';
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -48,18 +51,18 @@ const Reports = () => {
       {
         label: 'Compliance Score (%)',
         data: [82, 85, 84, 88, 89, 92, 91, 94, 95, 96, 94, 97],
-        borderColor: '#2ecc71',
-        backgroundColor: 'rgba(46, 204, 113, 0.15)',
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.15)',
         fill: true,
         tension: 0.4,
-        pointBackgroundColor: '#2ecc71',
+        pointBackgroundColor: '#3b82f6',
         pointBorderWidth: 2,
         pointHoverRadius: 6
       },
       {
         label: 'Industry Average',
         data: [75, 76, 75, 78, 79, 80, 81, 82, 83, 83, 84, 85],
-        borderColor: '#95a5a6',
+        borderColor: '#9ca3af',
         backgroundColor: 'transparent',
         borderDash: [5, 5],
         tension: 0.4,
@@ -71,21 +74,19 @@ const Reports = () => {
   const lineChartOptions = {
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8 } },
+      legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8, font: { family: 'inherit', weight: 500 } } },
       tooltip: {
-        backgroundColor: '#fff',
-        titleColor: '#444B53',
-        bodyColor: '#444B53',
-        borderColor: 'rgba(46, 204, 113, 0.2)',
-        borderWidth: 1,
+        backgroundColor: '#1f2937',
+        titleColor: '#fff',
+        bodyColor: '#fff',
         padding: 12,
         usePointStyle: true,
-        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        cornerRadius: 8
       }
     },
     scales: {
-      x: { grid: { display: false } },
-      y: { grid: { color: 'rgba(68, 75, 83, 0.05)', borderDash: [5, 5] }, min: 50, max: 100 }
+      x: { grid: { display: false }, ticks: { font: { family: 'inherit' } } },
+      y: { grid: { color: 'rgba(0, 0, 0, 0.05)', borderDash: [5, 5] }, min: 50, max: 100, ticks: { font: { family: 'inherit' } } }
     }
   };
 
@@ -95,14 +96,14 @@ const Reports = () => {
       {
         label: 'Active Contracts',
         data: [145, 82, 310, 45, 112, 203],
-        backgroundColor: '#6B8EB1',
-        borderRadius: 4
+        backgroundColor: '#6366f1',
+        borderRadius: 6
       },
       {
         label: 'Value ($M)',
         data: [12.5, 2.1, 45.3, 8.5, 6.2, 22.4],
-        backgroundColor: '#f39c12',
-        borderRadius: 4
+        backgroundColor: '#10b981',
+        borderRadius: 6
       }
     ]
   };
@@ -110,11 +111,11 @@ const Reports = () => {
   const barChartOptions = {
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8 } }
+      legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8, font: { family: 'inherit', weight: 500 } } }
     },
     scales: {
-      x: { grid: { display: false } },
-      y: { grid: { color: 'rgba(68, 75, 83, 0.05)', borderDash: [5, 5] }, beginAtZero: true }
+      x: { grid: { display: false }, ticks: { font: { family: 'inherit' } } },
+      y: { grid: { color: 'rgba(0, 0, 0, 0.05)', borderDash: [5, 5] }, beginAtZero: true, ticks: { font: { family: 'inherit' } } }
     }
   };
 
@@ -123,148 +124,141 @@ const Reports = () => {
     datasets: [
       {
         data: [650, 220, 85, 12],
-        backgroundColor: ['#2ecc71', '#f1c40f', '#e67e22', '#e74c3c'],
+        backgroundColor: ['#10b981', '#f59e0b', '#f97316', '#ef4444'],
         borderWidth: 0,
-        hoverOffset: 6
+        hoverOffset: 8
       }
     ]
   };
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  React.useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   const doughnutOptions = {
     maintainAspectRatio: false,
-    cutout: '70%',
+    cutout: '75%',
     plugins: {
-      legend: { position: isMobile ? 'bottom' : 'right', labels: { padding: 20, usePointStyle: true, pointStyle: 'circle' } }
+      legend: { position: 'right', labels: { padding: 20, usePointStyle: true, pointStyle: 'circle', font: { family: 'inherit', size: 13 } } }
     }
   };
 
   return (
-    <div className="reports-container">
-      {/* Glassmorphic Header */}
-      <div className="reports-header-glass animate-fade-in-up">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2" style={{ marginBottom: 0 }}>
-            <BarChart3 size={28} className="text-primary" />
-            Report Dashboard
-          </h1>
-          <p className="text-muted mt-1" style={{ fontSize: '0.95rem' }}>Generate, view, and export comprehensive contract insights.</p>
+    <div className="reports-dashboard fade-in">
+      {/* Header Section */}
+      <div className="rep-header-section">
+        <div className="rep-header-content">
+          <h1 className="rep-title">Intelligence & Analytics</h1>
+          <p className="rep-subtitle">Comprehensive insights across your entire contract portfolio.</p>
         </div>
-        <div className="flex gap-4 items-center">
-          <div className="time-filters" style={{ background: 'var(--color-bg)' }}>
-            <button className={`filter-btn ${dateRange === 'Q1' ? 'active' : ''}`} onClick={() => setDateRange('Q1')}>Q1</button>
-            <button className={`filter-btn ${dateRange === 'Q2' ? 'active' : ''}`} onClick={() => setDateRange('Q2')}>Q2</button>
-            <button className={`filter-btn ${dateRange === 'YTD' ? 'active' : ''}`} onClick={() => setDateRange('YTD')}>YTD</button>
+        <div className="rep-header-actions">
+          <div className="rep-time-filters">
+            {['Q1', 'Q2', 'Q3', 'YTD'].map(range => (
+              <button 
+                key={range}
+                className={`rep-time-btn ${dateRange === range ? 'active' : ''}`} 
+                onClick={() => setDateRange(range)}
+              >
+                {range}
+              </button>
+            ))}
           </div>
-          <button className="btn btn-outline flex items-center gap-2" style={{ background: '#fff' }}>
-            <Filter size={18} /> Filters
-          </button>
-          <button className="btn btn-primary flex items-center gap-2" style={{ boxShadow: '0 4px 12px rgba(107, 142, 177, 0.3)' }}>
-            <Download size={18} /> Export PDF
-          </button>
+          <Button variant="primary" icon={Download}>Export Report</Button>
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="reports-kpi-grid animate-fade-in-up delay-100">
-        <div className="kpi-card-premium">
-          <div className="kpi-icon-wrapper" style={{ color: 'var(--color-primary)' }}>
-            <FileText size={24} />
+      {/* Premium Analytics Cards */}
+      <div className="rep-analytics-grid">
+        <div className="rep-card glass-blue">
+          <div className="rep-card-top">
+            <div className="rep-card-icon"><FileText size={24} /></div>
+            <span className="rep-trend positive"><ArrowUpRight size={14} /> 12%</span>
           </div>
-          <div className="kpi-content">
-            <p>Total Contract Value</p>
-            <h3>$124.5M</h3>
-            <span className="text-xs text-success flex items-center gap-1 font-semibold">
-              <TrendingUp size={14} /> +12% from last year
-            </span>
-          </div>
-        </div>
-        <div className="kpi-card-premium">
-          <div className="kpi-icon-wrapper" style={{ color: 'var(--color-success)', background: 'rgba(46, 204, 113, 0.1)' }}>
-            <PieChartIcon size={24} />
-          </div>
-          <div className="kpi-content">
-            <p>Avg Execution Time</p>
-            <h3>14 Days</h3>
-            <span className="text-xs text-success flex items-center gap-1 font-semibold">
-              <TrendingUp size={14} /> -2 days improvement
-            </span>
+          <div className="rep-card-data">
+            <h3>Total Contract Value</h3>
+            <div className="rep-val">$124.5M</div>
+            <p>Active portfolio value</p>
           </div>
         </div>
-        <div className="kpi-card-premium">
-          <div className="kpi-icon-wrapper" style={{ color: 'var(--color-warning)', background: 'rgba(241, 196, 15, 0.1)' }}>
-            <Calendar size={24} />
+
+        <div className="rep-card glass-green">
+          <div className="rep-card-top">
+            <div className="rep-card-icon"><Activity size={24} /></div>
+            <span className="rep-trend positive"><ArrowDownRight size={14} /> 2 days</span>
           </div>
-          <div className="kpi-content">
-            <p>Upcoming Renewals (Q3)</p>
-            <h3>84</h3>
-            <span className="text-xs text-muted font-semibold flex items-center gap-1">
-              Value: $18.2M
-            </span>
+          <div className="rep-card-data">
+            <h3>Avg Execution Time</h3>
+            <div className="rep-val">14 Days</div>
+            <p>Cycle time improved</p>
           </div>
         </div>
-        <div className="kpi-card-premium">
-          <div className="kpi-icon-wrapper" style={{ color: 'var(--color-danger)', background: 'rgba(231, 76, 60, 0.1)' }}>
-            <TrendingUp size={24} />
+
+        <div className="rep-card glass-orange">
+          <div className="rep-card-top">
+            <div className="rep-card-icon"><Calendar size={24} /></div>
+            <span className="rep-trend neutral">Steady</span>
           </div>
-          <div className="kpi-content">
-            <p>Obligation Risk Index</p>
-            <h3>Low (1.2)</h3>
-            <span className="text-xs text-success flex items-center gap-1 font-semibold">
-              <TrendingUp size={14} /> Stable trend
-            </span>
+          <div className="rep-card-data">
+            <h3>Upcoming Renewals</h3>
+            <div className="rep-val">84</div>
+            <p>Next 90 days ($18.2M at risk)</p>
+          </div>
+        </div>
+
+        <div className="rep-card glass-purple">
+          <div className="rep-card-top">
+            <div className="rep-card-icon"><TrendingUp size={24} /></div>
+            <span className="rep-trend positive"><ArrowUpRight size={14} /> 4.2%</span>
+          </div>
+          <div className="rep-card-data">
+            <h3>Obligation Compliance</h3>
+            <div className="rep-val">97%</div>
+            <p>Overall organizational score</p>
           </div>
         </div>
       </div>
 
-      {/* Main Charts */}
-      <div className="reports-charts-grid animate-fade-in-up delay-200">
-        <div className="chart-card-premium">
-          <div className="chart-header-premium">
-            <div>
-              <h3>Compliance Trend</h3>
-              <p>Organization-wide compliance score vs industry benchmark</p>
+      {/* Main Charts Area */}
+      <div className="rep-charts-grid">
+        <div className="rep-chart-card animate-slide-up">
+          <div className="rep-chart-header">
+            <div className="rep-chart-title">
+              <h3>Portfolio Performance</h3>
+              <p>Organizational metrics vs industry benchmark</p>
             </div>
             <select 
-              className="premium-select"
+              className="rep-chart-select"
               value={reportType}
               onChange={(e) => setReportType(e.target.value)}
             >
-              <option value="compliance">Compliance</option>
-              <option value="financial">Financial</option>
-              <option value="operational">Operational</option>
+              <option value="compliance">Compliance Trend</option>
+              <option value="financial">Financial Impact</option>
+              <option value="operational">Operational Efficiency</option>
             </select>
           </div>
-          <div className="chart-wrapper report-chart-lg">
+          <div className="rep-chart-canvas">
             <Line data={complianceTrendData} options={lineChartOptions} />
           </div>
         </div>
 
-        <div className="chart-card-premium">
-          <div className="chart-header-premium">
-            <h3>Risk Distribution</h3>
+        <div className="rep-chart-card animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <div className="rep-chart-header">
+            <div className="rep-chart-title">
+              <h3>Risk Distribution</h3>
+              <p>Current portfolio risk assessment</p>
+            </div>
           </div>
-          <div className="chart-wrapper report-chart-lg flex items-center justify-center">
+          <div className="rep-chart-canvas flex-center">
             <Doughnut data={riskData} options={doughnutOptions} />
           </div>
         </div>
       </div>
 
-      <div className="chart-card-premium full-width-chart animate-fade-in-up delay-300">
-        <div className="chart-header-premium">
-          <div>
+      <div className="rep-chart-card animate-slide-up" style={{ animationDelay: '0.2s' }}>
+        <div className="rep-chart-header">
+          <div className="rep-chart-title">
             <h3>Department Breakdown</h3>
-            <p>Contract volume and value across departments</p>
+            <p>Contract volume and value distributed across business units</p>
           </div>
+          <Button variant="outline" icon={Filter}>More Filters</Button>
         </div>
-        <div className="chart-wrapper report-chart-xl">
+        <div className="rep-chart-canvas lg">
           <Bar data={departmentData} options={barChartOptions} />
         </div>
       </div>

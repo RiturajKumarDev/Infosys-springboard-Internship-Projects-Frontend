@@ -49,10 +49,10 @@ const AdminDashboard = () => {
   const [timeFilter, setTimeFilter] = useState('30D');
 
   const stats = [
-    { label: 'Active Contracts', value: '1,245', icon: <Files size={24} />, color: 'var(--color-primary)' },
-    { label: 'Upcoming Renewals', value: '38', icon: <CalendarClock size={24} />, color: 'var(--color-warning)' },
-    { label: 'Pending Obligations', value: '112', icon: <AlertTriangle size={24} />, color: 'var(--color-danger)' },
-    { label: 'Compliant', value: '94%', icon: <CheckCircle size={24} />, color: 'var(--color-success)' },
+    { label: 'Active Contracts', value: '1,245', icon: <Files size={24} />, color: 'var(--color-primary)', trend: '+12.5%', trendType: 'positive', subtext: 'vs last month' },
+    { label: 'Upcoming Renewals', value: '38', icon: <CalendarClock size={24} />, color: 'var(--color-warning)', trend: '4 critical', trendType: 'warning', subtext: 'needs attention' },
+    { label: 'Pending Obligations', value: '112', icon: <AlertTriangle size={24} />, color: 'var(--color-danger)', trend: '-5.2%', trendType: 'positive', subtext: 'vs last month' },
+    { label: 'Overall Compliant', value: '94%', icon: <CheckCircle size={24} />, color: 'var(--color-success)', trend: '+2.1%', trendType: 'positive', subtext: 'across portfolio' },
   ];
 
   // Dummy logic to simulate data changes
@@ -179,74 +179,96 @@ const AdminDashboard = () => {
 
       <div className="stats-grid stagger-1">
         {stats.map((stat, idx) => (
-          <Card key={idx} className="stat-card">
-            <div className="stat-icon" style={{ color: stat.color, backgroundColor: `${stat.color}15` }}>
-              {stat.icon}
+          <div key={idx} className="stat-card">
+            <div className="stat-card-header">
+              <div className="stat-icon" style={{ color: stat.color, backgroundColor: `${stat.color}15` }}>
+                {stat.icon}
+              </div>
+              <div className={`stat-trend ${stat.trendType}`}>
+                {stat.trend}
+              </div>
             </div>
             <div className="stat-content">
               <h3>{stat.value}</h3>
               <p>{stat.label}</p>
+              <span className="stat-subtext">{stat.subtext}</span>
             </div>
-          </Card>
+          </div>
         ))}
       </div>
 
       <div className="dashboard-middle-grid stagger-2">
-        <Card title="Contract Growth" className="chart-card main-chart">
+        <div className="dashboard-card main-chart-card">
+          <div className="dashboard-card-header">
+            <div>
+              <h3>Contract Growth</h3>
+              <p>Monthly contract additions and renewals</p>
+            </div>
+          </div>
           <div className="chart-wrapper">
             <Line data={lineChartData} options={lineChartOptions} />
           </div>
-        </Card>
+        </div>
 
         <div className="flex flex-col gap-6">
-          <Card className="quick-actions-card p-6" glow={true} noPadding={true}>
-            <div style={{ padding: '1.5rem' }}>
-              <h3 className="mb-4">Quick Actions</h3>
-              <div className="quick-actions-grid">
-                <button className="quick-action-btn">
-                  <div className="qa-icon" style={{ color: 'var(--color-primary)', backgroundColor: 'rgba(107, 142, 177, 0.15)' }}><Plus size={20}/></div>
-                  <span>Create NDA</span>
-                </button>
-                <button className="quick-action-btn">
-                  <div className="qa-icon" style={{ color: 'var(--color-warning)', backgroundColor: 'rgba(241, 196, 15, 0.15)' }}><Search size={20}/></div>
-                  <span>Search Contracts</span>
-                </button>
-                <button className="quick-action-btn">
-                  <div className="qa-icon" style={{ color: 'var(--color-success)', backgroundColor: 'rgba(46, 204, 113, 0.15)' }}><FileSignature size={20}/></div>
-                  <span>Review Approvals</span>
-                </button>
-                <button className="quick-action-btn">
-                  <div className="qa-icon" style={{ color: 'var(--color-danger)', backgroundColor: 'rgba(231, 76, 60, 0.15)' }}><FileWarning size={20}/></div>
-                  <span>Check Obligations</span>
-                </button>
-              </div>
+          <div className="dashboard-card quick-actions-card glow-card">
+            <div className="dashboard-card-header">
+              <h3>Quick Actions</h3>
             </div>
-          </Card>
+            <div className="quick-actions-grid">
+              <button className="quick-action-btn">
+                <div className="qa-icon" style={{ color: 'var(--color-primary)', backgroundColor: 'rgba(107, 142, 177, 0.15)' }}><Plus size={20}/></div>
+                <span>Create NDA</span>
+              </button>
+              <button className="quick-action-btn">
+                <div className="qa-icon" style={{ color: 'var(--color-warning)', backgroundColor: 'rgba(241, 196, 15, 0.15)' }}><Search size={20}/></div>
+                <span>Search Contracts</span>
+              </button>
+              <button className="quick-action-btn">
+                <div className="qa-icon" style={{ color: 'var(--color-success)', backgroundColor: 'rgba(46, 204, 113, 0.15)' }}><FileSignature size={20}/></div>
+                <span>Review Approvals</span>
+              </button>
+              <button className="quick-action-btn">
+                <div className="qa-icon" style={{ color: 'var(--color-danger)', backgroundColor: 'rgba(231, 76, 60, 0.15)' }}><FileWarning size={20}/></div>
+                <span>Check Obligations</span>
+              </button>
+            </div>
+          </div>
           
-          <Card title="Compliance Status" className="chart-card flex-1">
+          <div className="dashboard-card flex-1">
+            <div className="dashboard-card-header">
+              <h3>Compliance Status</h3>
+            </div>
             <div className="chart-wrapper doughnut-wrapper">
               <Doughnut data={doughnutData} options={doughnutOptions} />
             </div>
-          </Card>
+          </div>
         </div>
       </div>
 
       <div className="dashboard-middle-grid stagger-3">
-        <Card title="Obligations Performance" className="chart-card">
+        <div className="dashboard-card">
+          <div className="dashboard-card-header">
+            <div>
+              <h3>Obligations Performance</h3>
+              <p>Met vs Missed obligations over time</p>
+            </div>
+          </div>
           <div className="chart-wrapper">
             <Bar data={barChartData} options={barChartOptions} />
           </div>
-        </Card>
+        </div>
         
-        <Card className="mt-0" style={{ display: 'flex', flexDirection: 'column' }}>
-          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+        <div className="dashboard-card activity-dashboard-card" style={{ display: 'flex', flexDirection: 'column' }}>
+          <div className="dashboard-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
             <div className="flex items-center gap-2">
               <Activity size={20} className="text-primary" />
               <h3 style={{ margin: 0 }}>Recent Activities</h3>
             </div>
             <Button variant="outline" size="sm">View All</Button>
           </div>
-          <Table className="activity-table" style={{ flex: 1 }}>
+          <div className="activity-table-wrapper" style={{ flex: 1 }}>
+            <table className="activity-table">
               <thead>
                 <tr>
                   <th>User</th>
@@ -288,8 +310,9 @@ const AdminDashboard = () => {
                   </tr>
                 ))}
               </tbody>
-            </Table>
-        </Card>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
