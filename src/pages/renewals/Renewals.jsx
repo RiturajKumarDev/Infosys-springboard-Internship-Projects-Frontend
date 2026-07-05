@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import FormInput from '../../components/Form/FormInput';
 import Button from '../../components/Buttons/Button';
+import Checkbox from '../../components/Form/Checkbox';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import '../contracts/Contracts.css';
@@ -17,6 +18,24 @@ const Renewals = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [sortBy, setSortBy] = useState('expiryDate');
+  const [selectedRows, setSelectedRows] = useState([]);
+
+  const handleBulkAction = () => {
+    if (selectedRows.length === 0) {
+      alert('Please select at least one renewal for bulk action.');
+      return;
+    }
+    alert(`Bulk action initiated for ${selectedRows.length} items:\n${selectedRows.join(', ')}`);
+    setSelectedRows([]);
+  };
+
+  const handleSelectRow = (id) => {
+    if (selectedRows.includes(id)) {
+      setSelectedRows(selectedRows.filter(rowId => rowId !== id));
+    } else {
+      setSelectedRows([...selectedRows, id]);
+    }
+  };
 
   const renewalsData = [
     { id: 'REN-001', contractId: 'CON-2023-089', entity: 'Adobe Systems', type: 'Software License', expiryDate: '2023-10-15', daysLeft: 12, value: '$12,000', status: 'Action Required', autoRenew: false },
@@ -83,6 +102,14 @@ const Renewals = () => {
     return 0;
   });
 
+  const handleSelectAll = () => {
+    if (selectedRows.length === filteredItems.length && filteredItems.length > 0) {
+      setSelectedRows([]);
+    } else {
+      setSelectedRows(filteredItems.map(item => item.id));
+    }
+  };
+
   const chartData = {
     labels: ['Critical (< 30 days)', 'Upcoming (30-90 days)', 'On Track (> 90 days)', 'Auto-Renewing'],
     datasets: [
@@ -124,7 +151,7 @@ const Renewals = () => {
         </div>
         <div className="rnw-header-actions">
           <Button variant="outline" icon={CalendarDays}>View Calendar</Button>
-          <Button variant="primary" icon={ArrowRight}>Bulk Action</Button>
+          <Button variant="primary" icon={ArrowRight} onClick={handleBulkAction}>Bulk Action</Button>
         </div>
       </div>
 
@@ -202,6 +229,12 @@ const Renewals = () => {
           <table className="rnw-data-table">
             <thead>
               <tr>
+                <th style={{ width: '40px' }}>
+                  <Checkbox 
+                    checked={filteredItems.length > 0 && selectedRows.length === filteredItems.length} 
+                    onChange={handleSelectAll} 
+                  />
+                </th>
                 <th>Contract Details</th>
                 <th>Timeline</th>
                 <th>Renewal Value</th>
@@ -211,7 +244,13 @@ const Renewals = () => {
             </thead>
             <tbody>
               {filteredItems.map((item, index) => (
-                <tr key={item.id} className="rnw-table-row" style={{ animationDelay: `${index * 0.05}s` }}>
+                <tr key={item.id} className={`rnw-table-row ${selectedRows.includes(item.id) ? 'selected' : ''}`} style={{ animationDelay: `${index * 0.05}s` }}>
+                  <td>
+                    <Checkbox 
+                      checked={selectedRows.includes(item.id)}
+                      onChange={() => handleSelectRow(item.id)}
+                    />
+                  </td>
                   <td>
                     <div className="rnw-entity">{item.entity}</div>
                     <div className="rnw-meta">{item.type} • ID: {item.contractId}</div>

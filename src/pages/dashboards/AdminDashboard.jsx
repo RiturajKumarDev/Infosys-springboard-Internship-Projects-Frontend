@@ -17,6 +17,9 @@ import Button from '../../components/Buttons/Button';
 import Card from '../../components/DataDisplay/Card';
 import Table from '../../components/DataDisplay/Table';
 import Badge from '../../components/DataDisplay/Badge';
+import Modal from '../../components/Modals/Modal';
+import FormInput from '../../components/Form/FormInput';
+import FormSelect from '../../components/Form/FormSelect';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -47,6 +50,37 @@ ChartJS.register(
 
 const AdminDashboard = () => {
   const [timeFilter, setTimeFilter] = useState('30D');
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [newContract, setNewContract] = useState({ name: '', companyName: '', vendorName: '', category: 'Vendor Contract', value: '', expiry: '' });
+  const [showAllActivities, setShowAllActivities] = useState(false);
+
+  const [activities, setActivities] = useState([
+    { id: 1, user: 'Sarah Smith', avatar: 'SS', action: 'Approved', target: 'Vendor Agreement V2', time: '2 hours ago', status: 'Completed', type: 'success' },
+    { id: 2, user: 'John Doe', avatar: 'JD', action: 'Created', target: 'NDA - TechCorp', time: '4 hours ago', status: 'Pending', type: 'warning' },
+    { id: 3, user: 'System', avatar: 'SY', action: 'Flagged', target: 'Missed Obligation #1042', time: '1 day ago', status: 'Critical', type: 'danger' },
+    { id: 4, user: 'Alex Johnson', avatar: 'AJ', action: 'Renewed', target: 'Office Lease 2026', time: '2 days ago', status: 'Completed', type: 'success' },
+  ]);
+
+  const handleUploadContract = (e) => {
+    e.preventDefault();
+    alert('Contract successfully submitted for draft!');
+    
+    // Add new activity
+    const newActivity = {
+      id: Date.now(),
+      user: 'Current User', 
+      avatar: 'CU',
+      action: 'Created',
+      target: newContract.name || 'New Contract',
+      time: 'Just now',
+      status: 'Draft',
+      type: 'primary'
+    };
+    setActivities([newActivity, ...activities]);
+
+    setIsUploadModalOpen(false);
+    setNewContract({ name: '', companyName: '', vendorName: '', category: 'Vendor Contract', value: '', expiry: '' });
+  };
 
   const stats = [
     { label: 'Active Contracts', value: '1,245', icon: <Files size={24} />, color: 'var(--color-primary)', trend: '+12.5%', trendType: 'positive', subtext: 'vs last month' },
@@ -146,12 +180,7 @@ const AdminDashboard = () => {
     }
   };
 
-  const activities = [
-    { id: 1, user: 'Sarah Smith', avatar: 'SS', action: 'Approved', target: 'Vendor Agreement V2', time: '2 hours ago', status: 'Completed', type: 'success' },
-    { id: 2, user: 'John Doe', avatar: 'JD', action: 'Created', target: 'NDA - TechCorp', time: '4 hours ago', status: 'Pending', type: 'warning' },
-    { id: 3, user: 'System', avatar: 'SY', action: 'Flagged', target: 'Missed Obligation #1042', time: '1 day ago', status: 'Critical', type: 'danger' },
-    { id: 4, user: 'Alex Johnson', avatar: 'AJ', action: 'Renewed', target: 'Office Lease 2026', time: '2 days ago', status: 'Completed', type: 'success' },
-  ];
+  const displayedActivities = showAllActivities ? activities : activities.slice(0, 4);
 
   return (
     <div className="dashboard-container fade-in">
@@ -170,7 +199,7 @@ const AdminDashboard = () => {
             <Button variant="outline" icon={TrendingUp}>
               Generate Report
             </Button>
-            <Button variant="primary" icon={Plus}>
+            <Button variant="primary" icon={Plus} onClick={() => setIsUploadModalOpen(true)}>
               New Contract
             </Button>
           </div>
@@ -216,7 +245,7 @@ const AdminDashboard = () => {
               <h3>Quick Actions</h3>
             </div>
             <div className="quick-actions-grid">
-              <button className="quick-action-btn">
+              <button className="quick-action-btn" onClick={() => setIsUploadModalOpen(true)}>
                 <div className="qa-icon" style={{ color: 'var(--color-primary)', backgroundColor: 'rgba(107, 142, 177, 0.15)' }}><Plus size={20}/></div>
                 <span>Create NDA</span>
               </button>
@@ -265,7 +294,9 @@ const AdminDashboard = () => {
               <Activity size={20} className="text-primary" />
               <h3 style={{ margin: 0 }}>Recent Activities</h3>
             </div>
-            <Button variant="outline" size="sm">View All</Button>
+            <Button variant="outline" size="sm" onClick={() => setShowAllActivities(!showAllActivities)}>
+              {showAllActivities ? 'Show Less' : 'View All'}
+            </Button>
           </div>
           <div className="activity-table-wrapper" style={{ flex: 1 }}>
             <table className="activity-table">
@@ -279,7 +310,7 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {activities.map((act) => (
+                {displayedActivities.map((act) => (
                   <tr key={act.id}>
                     <td>
                       <div className="table-user">
@@ -301,6 +332,7 @@ const AdminDashboard = () => {
                     <td>
                       <Dropdown 
                         label="Manage" 
+                        onSelect={(item) => alert(`${item.label} selected for activity ID: ${act.id} (User: ${act.user})`)}
                         items={[
                           { label: 'View User' },
                           { label: 'Audit Trail' }
@@ -314,6 +346,40 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Upload Modal */}
+      <Modal 
+        isOpen={isUploadModalOpen} 
+        onClose={() => setIsUploadModalOpen(false)}
+        title="Upload New Contract"
+        footer={
+          <>
+            <Button type="button" variant="outline" onClick={() => setIsUploadModalOpen(false)}>Cancel</Button>
+            <Button type="button" variant="primary" onClick={handleUploadContract}>Upload & Create Draft</Button>
+          </>
+        }
+      >
+        <form onSubmit={handleUploadContract} id="upload-contract-form">
+          <FormInput label="Contract Name" type="text" placeholder="e.g. Acme Corp NDA" required value={newContract.name} onChange={(e) => setNewContract({...newContract, name: e.target.value})} />
+          <FormInput label="Company/Entity Name" type="text" placeholder="e.g. Global Industries Ltd." required value={newContract.companyName} onChange={(e) => setNewContract({...newContract, companyName: e.target.value})} />
+          <FormSelect 
+            label="Category"
+            value={newContract.category}
+            onChange={(e) => setNewContract({...newContract, category: e.target.value})}
+            options={[
+              { value: 'Vendor Contract', label: 'Vendor Contract' },
+              { value: 'Employment Contract', label: 'Employment Contract' },
+              { value: 'Lease Agreement', label: 'Lease Agreement' },
+              { value: 'Service Agreement', label: 'Service Agreement' }
+            ]}
+          />
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <FormInput label="Value" type="text" placeholder="$0.00" value={newContract.value} onChange={(e) => setNewContract({...newContract, value: e.target.value})} />
+            <FormInput label="Expiry Date" type="date" required value={newContract.expiry} onChange={(e) => setNewContract({...newContract, expiry: e.target.value})} />
+          </div>
+          <FormInput label="Attach Document (PDF, DOCX)" type="file" required />
+        </form>
+      </Modal>
     </div>
   );
 };
